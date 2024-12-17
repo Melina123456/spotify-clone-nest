@@ -35,8 +35,6 @@ class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-  console.log('config', config);
-
   const validatedConfig = plainToInstance(EnvironmentVariables, config, {
     /**
 * enableImplicitConversion will tell class-transformer that if it sees a
@@ -46,8 +44,6 @@ Number) or @Type(() => Boolean) isn't used
 */
     enableImplicitConversion: true,
   });
-
-  console.log({ validatedConfig });
 
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,

@@ -60,7 +60,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   enable2FA(@Request() req): Promise<Enable2FAType> {
-    console.log(req.user);
     return this.authService.enable2FA(req.user.userId);
   }
 
@@ -81,7 +80,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   disable2FA(@Request() req): Promise<UpdateResult> {
-    console.log(req.user);
     return this.authService.disable2FA(req.user.userId);
   }
 

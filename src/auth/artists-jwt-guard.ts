@@ -17,7 +17,7 @@ export class ArtistJwtGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }
-    console.log(user);
+
     if (user.artistId) {
       return user;
     }
