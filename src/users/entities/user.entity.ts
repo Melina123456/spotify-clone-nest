@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -7,15 +8,31 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    example: 'Jane',
+    description: 'provide the firstname of the user',
+  })
   @Column()
   firstName: string;
 
+  @ApiProperty({
+    example: 'Doe',
+    description: 'provide the lastname of the user',
+  })
   @Column()
   lastName: string;
 
+  @ApiProperty({
+    example: 'jane@gmail.com',
+    description: 'provide the email of the user',
+  })
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty({
+    example: 'Test123#@',
+    description: 'provide the password of the user',
+  })
   @Column()
   @Exclude()
   password: string;
@@ -28,9 +45,6 @@ export class User {
 
   @Column()
   apiKey: string;
-
-  @Column()
-  phone: string;
 
   /**
    * A user can create many playLists

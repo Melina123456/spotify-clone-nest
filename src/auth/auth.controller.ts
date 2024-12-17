@@ -16,8 +16,15 @@ import { Enable2FAType } from './types';
 import { ValidateTokenDTO } from './dto/validate-token.dto';
 import { UpdateResult } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(
     private userService: UsersService,
@@ -25,17 +32,33 @@ export class AuthController {
   ) {}
 
   @Post('signup')
+  @ApiOperation({ summary: 'Register new User' })
+  @ApiResponse({
+    status: 201,
+    description: 'It will return the user in the respone',
+  })
   signup(@Body() userDto: CreateUserDto): Promise<User> {
     return this.userService.create(userDto);
   }
 
   @Post('login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiResponse({
+    status: 200,
+    description: 'It will give you the access_token in the response',
+  })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
   @Get('enable-2fa')
+  @ApiOperation({ summary: 'Enable your 2fa' })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return the secret which you can use in authenticator',
+  })
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   enable2FA(@Request() req): Promise<Enable2FAType> {
     console.log(req.user);
     return this.authService.enable2FA(req.user.userId);
@@ -43,6 +66,7 @@ export class AuthController {
 
   @Post('validate-2fa')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   validate2FA(
     @Request() req,
     @Body() validateTokenDto: ValidateTokenDTO,
@@ -55,6 +79,7 @@ export class AuthController {
 
   @Get('disable-2fa')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   disable2FA(@Request() req): Promise<UpdateResult> {
     console.log(req.user);
     return this.authService.disable2FA(req.user.userId);
@@ -68,5 +93,10 @@ export class AuthController {
       msg: 'authenticated with api key',
       user: req.user,
     };
+  }
+
+  @Get('test')
+  testEnvVariable() {
+    return this.authService.getEnvVariable();
   }
 }
