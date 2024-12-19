@@ -1,14 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { ArtistsService } from 'src/artists/artists.service';
+import { ArtistsService } from 'src/modules/artists/artists.service';
 import { Enable2FAType, payloadType } from './types';
 import * as speakeasy from 'speakeasy';
 import { UpdateResult } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {

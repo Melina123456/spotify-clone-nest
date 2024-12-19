@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from './playlist.entity';
 import { Repository } from 'typeorm';
-import { Song } from 'src/songs/entities/song.entity';
-import { User } from 'src/users/entities/user.entity';
 import { createPlayListDto } from './dto/create-playlist.dto';
+import { Song } from '../songs/entities/song.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PlaylistsService {

@@ -1,5 +1,3 @@
-import { Song } from 'src/songs/entities/song.entity';
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -7,6 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Song } from '../songs/entities/song.entity';
+import { User } from '../users/entities/user.entity';
 
 @Entity('playlists')
 export class Playlist {
@@ -21,7 +21,7 @@ export class Playlist {
   @OneToMany(() => Song, (song) => song.playList)
   songs: Song[];
 
-  //   Many playlist can belong to a single unique user
+  //  Many playlist can belong to a single unique user
 
   @ManyToOne(() => User, (user) => user.playLists)
   user: User;

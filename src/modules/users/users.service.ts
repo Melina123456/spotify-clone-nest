@@ -1,17 +1,19 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { LoginDto } from 'src/auth/dto/login.dto';
+import { LoginDto } from 'src/modules/auth/dto/login.dto';
 import { v4 as uuid4 } from 'uuid';
+import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async create(userDto: CreateUserDto): Promise<User> {
     const user = new User();
@@ -23,9 +25,17 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(userDto.password, salt);
 
-    const savedUser = await this.userRepository.save(user);
+    const savedUser = await this.userRepository.saveUser(user);
     delete savedUser.password;
     return savedUser;
+  }
+
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.findAll();
+    if (!users) {
+      throw new NotFoundException('Users not found');
+    }
+    return users;
   }
 
   async findOne(data: LoginDto): Promise<User> {
@@ -37,7 +47,13 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id: id });
+    const user = await this.userRepository.findOneBy({ id: id });
+    if (!user) throw new NotFoundException('User not found in the database');
+    return user;
+  }
+
+  async deleteUser(id: number): Promise<DeleteResult> {
+    return await this.userRepository.deleteUser(id);
   }
 
   async updateSecretKey(userId, secret: string): Promise<UpdateResult> {
@@ -62,14 +78,6 @@ export class UsersService {
         twoFASecret: null,
       },
     );
-  }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 
   async findByApiKey(apiKey: string): Promise<User> {

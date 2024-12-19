@@ -19,8 +19,16 @@ import { Song } from './entities/song.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { ArtistJwtGuard } from 'src/auth/artists-jwt-guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ArtistJwtGuard } from 'src/modules/auth/artists-jwt-guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('songs')
 @ApiTags('songs')
@@ -29,6 +37,7 @@ export class SongsController {
 
   @Post()
   @UseGuards(ArtistJwtGuard)
+  @ApiBearerAuth('JWT-auth')
   create(
     @Body() createSongDto: CreateSongDto,
     @Request() request,
@@ -38,6 +47,26 @@ export class SongsController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'fetch all the songs' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'give page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'give page size',
+  })
+  @ApiOkResponse({
+    description: 'list of songs found successfully',
+    type: CreateSongDto,
+    isArray: true,
+  })
+  @ApiNotFoundResponse({
+    description: 'Songs not found',
+  })
+  @ApiBadRequestResponse({ description: 'Invalid data provided' })
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,

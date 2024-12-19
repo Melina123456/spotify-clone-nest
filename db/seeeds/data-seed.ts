@@ -2,9 +2,9 @@ import { EntityManager } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid4 } from 'uuid';
-import { User } from 'src/users/entities/user.entity';
-import { Artist } from 'src/artists/artist.entity';
-import { Playlist } from 'src/playlists/playlist.entity';
+import { Artist } from 'src/modules/artists/artist.entity';
+import { User } from 'src/modules/users/entities/user.entity';
+import { Playlist } from 'src/modules/playlists/playlist.entity';
 
 export const seedData = async (manager: EntityManager): Promise<void> => {
   await seedUser();
